@@ -1,0 +1,7 @@
+/node_modules
+/dist
+/.tmp
+/.sass-cache
+/public/bower_components
+/resources
+TODO.md

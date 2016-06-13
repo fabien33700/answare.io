@@ -1,0 +1,93 @@
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+body {
+    font-family: "Open Sans";
+    padding-bottom: 70px;
+}
+
+button {
+    font-size: 9px;
+    margin-right: 5px;
+}
+
+label {
+  font-weight: normal;
+}
+
+label:hover {
+  font-weight: bold;
+}
+
+.main-view {
+  padding: 2em;
+  margin-top: 50px;
+}
+
+.progress-wrapper{
+    position: relative;
+    margin:20px auto;
+    font-size: 40px;
+}
+
+.progress{
+    position: absolute;
+    color: #bbb;
+    font-weight: 100;
+    line-height: 1;
+}
+
+footer {
+   position:fixed;
+   left:0px;
+   bottom:0px;
+   height:70px;
+   width:100%;
+   text-align: center;
+   border-top: 1px solid #e5e5e5;
+   background-color: #f5f5f5;
+}
+
+.navbar-inner {
+	-webkit-box-shadow: 0 3px 3px rgba(0,0,0,0.175);
+	box-shadow: 0 3px 3px rgba(0,0,0,0.175);
+}
+
+.suggest-correct {
+  color: #449d44;
+  font-weight: bold;
+}
+
+.suggest-wrong {
+  color: #c9302c;
+  text-decoration: line-through;
+}
+
+.result-number {
+  font-weight: bold;
+}
+
+.nav>li>a {
+  display: none;
+}
+
+/* Angular circle SVG progressbar */
+.progress-wrapper{
+    position: relative;
+    /*margin:20px auto;*/
+    /*font-size: 40px;*/
+}
+
+.progress-text {
+    position: absolute;
+    color: #337ab7;
+    font-weight: 100;
+    font-size: 25px;
+    top: 30px;
+    left: 25px;
+}
+
+.float-clock {
+  position: absolute;
+  left: 25px;
+  top: 60px;
+}

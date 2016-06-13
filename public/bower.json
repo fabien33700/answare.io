@@ -1,0 +1,36 @@
+{
+  "name": "answareio",
+  "version": "0.0.0",
+  "dependencies": {
+    "angular": "^1.4.0",
+    "bootstrap": "^3.2.0",
+    "jquery": "~2.2.1",
+    "angular-animate": "^1.4.0",
+    "angular-cookies": "^1.4.0",
+    "angular-resource": "^1.4.0",
+    "angular-route": "^1.4.0",
+    "angular-sanitize": "^1.4.0",
+    "angular-touch": "^1.4.0",
+    "checklist-model": "^0.9.0",
+    "angular-bootstrap": "^1.3.2",
+    "components-font-awesome": "^4.5.0",
+    "angular-svg-round-progressbar": "^0.4.2",
+    "angular-timer": "^1.3.3",
+    "moment": "momentjs#^2.13.0",
+    "angular-busy": "^4.1.3"
+  },
+  "devDependencies": {
+    "angular-mocks": "^1.4.0"
+  },
+  "appPath": "app",
+  "moduleName": "answareioApp",
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "less/bootstrap.less",
+        "dist/css/bootstrap.css",
+        "dist/js/bootstrap.js"
+      ]
+    }
+  }
+}

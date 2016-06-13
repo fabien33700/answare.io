@@ -1,0 +1,102 @@
+<div class="float-clock" ng-show="!correctionStep">
+  <span class="fa fa-clock-o"></span> <timer interval="1000">{{mminutes}}:{{sseconds}}</timer>
+</div>
+
+<div class="container-fluid main-view">
+  <div class="col-lg-10 col-lg-offset-1">
+
+    <div class="row result-animation" ng-show="correctionStep">
+
+      <h1>Résultats</h1>
+      <div class="col-lg-2 col-lg-offset-1">
+        <div class="progress-wrapper">
+              <div class="progress-text">{{ (smoothPercent || score.percent) }}%</div>
+              <div
+                  round-progress
+                  max="score.total"
+                  current="score.good"
+                  color="#5bc0de"
+                  bgcolor="#eaeaea"
+                  radius="50"
+                  rounded="false"
+                  stroke="10"
+                  clockwise="true"
+                  responsive="false"
+                  duration="1200"
+                  animation="easeInOutQuart"
+                  animation-delay="0"
+                  on-render="showCurrent">
+              </div>
+          </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div>Taux de réussite : <b>{{score.percent}}</b> %</div>
+        <div><b>{{score.good}}</b> bonne(s) réponse(s) sur un total de <b>{{score.total}}</b> questions.</div>
+        <div>Durée de l'épreuve : <b>{{duration}}</b><br></div>
+        <button class="btn btn-info" ng-click="gotoMenu()">Retour au menu</button>
+      </div>
+
+      <hr>
+    </div>
+
+    <div class="row">
+
+      <div class="col-lg-12">
+        <uib-tabset class="tab-animation" active="selected" type="pills">
+          <uib-tab index="q" heading="Question {{q}}" ng-repeat="(q, question) in quiz.questions">
+
+            <div class="alert alert-danger" ng-show="formError">
+              <div ng-bind="formError"></div>
+            </div>
+
+            <p><strong>Question n°{{q+1}} : </strong>{{question.text}}</p>
+
+            <ul ng-repeat="(s, suggest) in question.suggests">
+              <div ng-switch="question.type">
+                <label ng-switch-when="single" ng-class="getSuggestClass(q, s)">
+                  <input type="radio" ng-model="answers[q]" ng-disabled="correctionStep" name="question{{q}}" ng-value="{{s}}">
+                   {{s+1}}. {{suggest}}
+                </label>
+
+                <label ng-switch-when="multiple" ng-class="getSuggestClass(q, s)">
+                  <input type="checkbox" ng-disabled="correctionStep" checklist-model="answers[q]" checklist-value="s">
+                   {{s+1}}. {{suggest}}
+                </label>
+
+              </div>
+            </ul>
+
+            <div ng-show="correctionStep">{{ corrections[q].explain }}&nbsp;</div>
+            <hr>
+          </uib-tab>
+        </uib-tabset>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="btn-group" role="group" aria-label="" ng-show="!correctionStep">
+          <button type="button" ng-click="validate()" class="btn btn-success pull-right">
+            Valider <span class="fa fa-check"></span>
+          </button>
+        </div>
+
+        <div ng-show="correctionStep" ng-repeat="q in range(nbQuestions)" class="btn-group" role="group" aria-label="">
+          <button type="button" ng-click="select(q)" ng-class="getQuestionButtonClass(corrections[q].valid)">
+            Question {{q+1}}
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row" ng-show="debug">
+      Données quiz : <pre ng-bind="quiz | json"></pre>
+      Réponse utilisateur : <pre>{{ answers }}</pre>
+      Corrections : <pre>{{ corrections | json }}</pre>
+    </div>
+
+  </div>
+</div>

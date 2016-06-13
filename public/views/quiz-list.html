@@ -1,0 +1,23 @@
+<div class="container-fluid main-view">
+  <div class="row">
+
+    <div class="col-lg-10 col-lg-offset-1">
+      <div class="alert alert-danger" ng-show="error">
+        <div ng-bind="error"></div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-lg-offset-4">
+
+      <div cg-busy="{promise: loading, message:'Chargement en cours ...', backdrop:true, minDuration: 300}"></div>
+      <uib-accordion close-others="true">
+        <uib-accordion-group heading="{{quiz.title}}" ng-repeat="quiz in quizList">
+          <p>{{quiz.descr}}</p>
+          <button class="btn btn-primary pull-right" ng-click="openQuiz(quiz.name)"><span class="fa fa-play"></span> Commencer le test</button>
+        </uib-accordion-group>
+      </uib-accordion>
+
+    </div>
+
+  </div>
+</div>
