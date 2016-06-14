@@ -2,6 +2,6 @@
 /dist
 /.tmp
 /.sass-cache
-/public/bower_components
+/bower_components
 /resources
 TODO.md

@@ -1,7 +1,5 @@
 'use strict';
 
-var port = 9000;
-
 angular.module('answareServices', [])
   .factory('QuizFactory', function($http, $q, $log) {
     return {
