@@ -46,10 +46,10 @@ module.exports =
                   "la vapeur"
               ]
           }
-      ],
-      "tags" : [],
+      ]
+      /*"tags" : [],
       "category" : [],
-      "postdate" : "2016-04-09T21:48:15.767Z"
+      "postdate" : "2016-04-09T21:48:15.767Z"*/
   }/*,
 
   {

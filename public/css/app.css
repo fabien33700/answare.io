@@ -62,6 +62,11 @@ footer {
   text-decoration: line-through;
 }
 
+.suggest-missing {
+  color: #c9302c;
+  font-style: italic;
+}
+
 .result-number {
   font-weight: bold;
 }

@@ -10,7 +10,7 @@ angular.module('answareServices', [])
           var quiz = response.data;
 
           quiz.questions.forEach(function (question) {
-            stripAttributes(question, ['explain', 'correct']);
+            Utils.removeAttr(question, ['explain', 'correct']);
           });
 
           defer.resolve(quiz);

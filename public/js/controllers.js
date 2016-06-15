@@ -23,7 +23,7 @@ answareControllers.controller('footerCtrl', function ($scope) {
 // Contrôleur pour l'affichage de la liste des quiz
 answareControllers.controller('quizListCtrl', function($scope, $http, $window, QuizFactory) {
 
-    $scope.error = false;
+    $scope.serviceError = false;
 
     $scope.openQuiz = function (quizName) {
       $window.location.href="/#/quiz/" + quizName;
@@ -38,11 +38,11 @@ answareControllers.controller('quizListCtrl', function($scope, $http, $window, Q
       function (reason) {
         switch (reason) {
           case 'ServerUnreachable':
-            $scope.error = 'Le serveur de données semble indisponible.';
+            $scope.serviceError = 'Le serveur de données semble indisponible.';
           break;
 
           default:
-            $scope.error = 'Erreur inconnue.';
+            $scope.serviceError = 'Erreur inconnue.';
           break;
         }
   	  });
@@ -51,119 +51,114 @@ answareControllers.controller('quizListCtrl', function($scope, $http, $window, Q
 
 answareControllers.controller('quizTestCtrl', function ($scope, $routeParams, $timeout, $location, QuizFactory) {
 
+  $scope._debug_ = false;
+
   // Initialisation des variables du scope
   var quizName = $routeParams.quizName;
 
-  $scope.debug = false;
   $scope.selected = 0;
-  $scope.correctionStep = false;
-  $scope.error = false;
+  $scope.isCorrection = false;
+  $scope.serviceError = false;
 
-  $scope.select = function (newId) {
-    $scope.formError = false;
+  $scope.range = Utils.createRange;
+
+  $scope.selectQuestion = function (questionId) {
+    $scope.userInputError = false;
 
     $scope.pages[$scope.selected] = false;
-    $scope.pages[newId] = true;
-    $scope.selected = newId;
+    $scope.pages[$scope.selected = questionId] = true;
 
-    if (!$scope.correctionStep && (newId === $scope.nbQuestions)) {
-      $scope.correctionStep = true;
+    if (!$scope.isCorrection && (questionId === $scope.quiz.nbQuestions())) {
+      $scope.isCorrection = true;
       $scope.selected = 0;
-      $scope.correction();
+      $scope.showCorrection();
     }
-  };
-
-  var compareAnswer = function (user, correct) {
-    return (Array.isArray(user)) ? user.equals(correct) : (user === correct[0]);
   };
 
   var stopTimer = function () {
-    var timer = document.getElementsByTagName('timer')[0];
+      var timer = document.getElementsByTagName('timer')[0];
 
-    timer.stop();
-    $scope.duration = timer.textContent;
+      timer.stop();
+      $scope.duration = timer.textContent;
   }
 
-  $scope.range = function (max) {
-    var results = [];
-    for (var i = 0; i < max; i++)
-      results.push(i);
-    return results;
-  };
-
   $scope.getQuestionButtonClass = function (correct) {
-    return "btn btn-" + ((correct) ? 'success' : 'danger');
+      return "btn btn-" + ((correct) ? 'success' : 'danger');
   };
 
-  $scope.getSuggestClass = function (q, s) {
-    if ($scope.correctionStep) {
-      if ($scope.corrections !== undefined) {
-        return ($scope.corrections[q].answer.indexOf(s) > -1)
-          ? 'suggest-correct'
-          : (($scope.corrections[q].valid) ? '' : 'suggest-wrong');
-      } else {
-        return '';
+  $scope.getAnswerClass = function (qId, sId) {
+      if (!$scope.isCorrection) return "";
+
+      let currentQuestion = $scope.quiz.getQuestion(qId);
+
+      switch (currentQuestion.getType()) {
+          case "single":
+              if (Utils.arrayContains(currentQuestion.getCorrectAnswers(), sId))
+                  return "suggest-correct";
+
+              if ((!currentQuestion.isValid())
+                    && (Utils.arrayContains($scope.answers[qId], sId)))
+                  return "suggest-wrong";
+
+          break;
+
+          case "multiple":
+              let correct = Utils.arrayContains(currentQuestion.getCorrectAnswers(), sId);
+              let given = Utils.arrayContains($scope.answers[qId], sId);
+
+              if (given && correct) return "suggest-correct";
+              if (!correct && given) return "suggest-wrong";
+              if (correct && !given) return "suggest-missing";
+
+          break;
       }
-    } else {
-      return '';
-    }
+
+      return "";
   };
 
   $scope.gotoMenu = function () {
-    $location.path("/#/quiz");
-  }
+      $location.path("/#/quiz");
+  };
 
-  $scope.correction = function () {
+  $scope.showCorrection = function () {
+
     QuizFactory.getCorrection(quizName).then(function(response) {
-      var corrections = response;
-      var nbCorrect = 0;
+      $scope.quiz.applyCorrection(response);
+      $scope.quiz.validateCorrection($scope.answers);
 
-      corrections.forEach(function (correction, i) {
-        correction.valid = compareAnswer($scope.answers[i], correction.answer);
-        if (correction.valid) nbCorrect++;
-      });
-
-      $scope.corrections = corrections;
-
-      var score = {
-        good: nbCorrect,
-        total:  $scope.nbQuestions
-      };
-      score.percent = parseInt(score.good/score.total*100);
-      $scope.score = score;
+      $scope.score = $scope.quiz.getScore();
 
       stopTimer('testTimer');
 
     }).catch(function() {
-      $scope.error = 'Une erreur s\'est produite à la réception des données !';
+      $scope.serviceError = 'Une erreur s\'est produite à la réception des données !';
     });
   };
 
   $scope.validate = function () {
 
-    if ($scope.answers[$scope.selected] !== -1) {
-      $scope.select($scope.selected + 1);
-    } else {
-      $scope.formError = "Vous devez répondre à cette question !";
-    }
+    if ($scope.answers[$scope.selected] !== -1)
+        $scope.selectQuestion($scope.selected + 1);
+     else
+        $scope.userInputError = "Vous devez répondre à cette question !";
   }
 
   // On récupère les questions du quiz via la fabrique QuizFactory (sans les résultats)
   QuizFactory.getQuiz(quizName).then(function(response) {
-    $scope.quiz = response;
-    $scope.nbQuestions = $scope.quiz.questions.length;
 
-    $scope.answers = createArray(-1   , $scope.nbQuestions);
-    $scope.pages   = createArray(false, $scope.nbQuestions);
+    $scope.quiz = new Quiz(response);
+    $scope.answers = Utils.createArray(-1   , $scope.quiz.nbQuestions());
+    $scope.pages   = Utils.createArray(false, $scope.quiz.nbQuestions());
 
   }).catch(function() {
-    $scope.error = 'Une erreur s\'est produite à la réception des données !';
+    $scope.serviceError = 'Une erreur s\'est produite à la réception des données !';
   });
 
   /* Circle progressbar */
   $scope.showCurrent = function(amount){
     $timeout(function(){
-        $scope.smoothPercent = parseInt(amount/$scope.nbQuestions*100);
+        if ($scope.quiz)
+            $scope.smoothPercent = parseInt(amount/$scope.quiz.nbQuestions()*100);
     });
   };
 

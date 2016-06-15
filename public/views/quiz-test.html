@@ -1,11 +1,11 @@
-<div class="float-clock" ng-show="!correctionStep">
+<div class="float-clock" ng-show="!isCorrection">
   <span class="fa fa-clock-o"></span> <timer interval="1000">{{mminutes}}:{{sseconds}}</timer>
 </div>
 
 <div class="container-fluid main-view">
   <div class="col-lg-10 col-lg-offset-1">
 
-    <div class="row result-animation" ng-show="correctionStep">
+    <div class="row result-animation" ng-show="isCorrection">
 
       <h1>Résultats</h1>
       <div class="col-lg-2 col-lg-offset-1">
@@ -44,30 +44,31 @@
 
       <div class="col-lg-12">
         <uib-tabset class="tab-animation" active="selected" type="pills">
-          <uib-tab index="q" heading="Question {{q}}" ng-repeat="(q, question) in quiz.questions">
+          <uib-tab index="question.getIndex()" ng-repeat="question in quiz.getQuestions()">
 
-            <div class="alert alert-danger" ng-show="formError">
-              <div ng-bind="formError"></div>
+
+            <div class="alert alert-danger" ng-show="userInputError">
+              <div ng-bind="userInputError"></div>
             </div>
 
-            <p><strong>Question n°{{q+1}} : </strong>{{question.text}}</p>
+            <p><strong>Question n°{{$index+1}} : </strong>{{question.getText()}}</p>
 
-            <ul ng-repeat="(s, suggest) in question.suggests">
-              <div ng-switch="question.type">
-                <label ng-switch-when="single" ng-class="getSuggestClass(q, s)">
-                  <input type="radio" ng-model="answers[q]" ng-disabled="correctionStep" name="question{{q}}" ng-value="{{s}}">
-                   {{s+1}}. {{suggest}}
+            <ul ng-repeat="suggest in question.getSuggests()" index="suggest.getIndex()" ng-init="q = question.getIndex()">
+
+              <div ng-switch="question.getType()">
+                <label ng-switch-when="single" ng-class="getAnswerClass(q, $index)">
+                  <input type="radio" ng-model="answers[q]" ng-disabled="isCorrection" name="question{{q}}" ng-value="{{$index}}">
+                   {{$index+1}}. {{suggest.getText()}}
                 </label>
 
-                <label ng-switch-when="multiple" ng-class="getSuggestClass(q, s)">
-                  <input type="checkbox" ng-disabled="correctionStep" checklist-model="answers[q]" checklist-value="s">
-                   {{s+1}}. {{suggest}}
+                <label ng-switch-when="multiple" ng-class="getAnswerClass(q, $index)">
+                  <input type="checkbox" ng-disabled="isCorrection" checklist-model="answers[q]" checklist-value="$index">
+                   {{$index+1}}. {{suggest.getText()}}
                 </label>
-
               </div>
             </ul>
 
-            <div ng-show="correctionStep">{{ corrections[q].explain }}&nbsp;</div>
+            <div ng-show="isCorrection">{{ question.getExplain() }}&nbsp;</div>
             <hr>
           </uib-tab>
         </uib-tabset>
@@ -77,22 +78,22 @@
 
     <div class="row">
       <div class="col-lg-12">
-        <div class="btn-group" role="group" aria-label="" ng-show="!correctionStep">
+        <div class="btn-group" role="group" aria-label="" ng-show="!isCorrection">
           <button type="button" ng-click="validate()" class="btn btn-success pull-right">
             Valider <span class="fa fa-check"></span>
           </button>
         </div>
 
-        <div ng-show="correctionStep" ng-repeat="q in range(nbQuestions)" class="btn-group" role="group" aria-label="">
-          <button type="button" ng-click="select(q)" ng-class="getQuestionButtonClass(corrections[q].valid)">
-            Question {{q+1}}
+        <div ng-show="isCorrection" ng-repeat="question in quiz.getQuestions()" index="question.getIndex()" class="btn-group" role="group" aria-label="">
+          <button type="button" ng-click="selectQuestion($index)" ng-class="getQuestionButtonClass(question.isValid())">
+            Question {{$index+1}}
           </button>
         </div>
       </div>
     </div>
 
 
-    <div class="row" ng-show="debug">
+    <div class="row" ng-show="_debug_">
       Données quiz : <pre ng-bind="quiz | json"></pre>
       Réponse utilisateur : <pre>{{ answers }}</pre>
       Corrections : <pre>{{ corrections | json }}</pre>
