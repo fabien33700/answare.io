@@ -58,12 +58,14 @@
               <div ng-switch="question.getType()">
                 <label ng-switch-when="single" ng-class="getAnswerClass(q, $index)">
                   <input type="radio" ng-model="answers[q]" ng-disabled="isCorrection" name="question{{q}}" ng-value="{{$index}}">
-                   {{$index+1}}. {{suggest.getText()}}
+                    {{$index+1}}. {{suggest.getText()}}
+                  </input>
                 </label>
 
                 <label ng-switch-when="multiple" ng-class="getAnswerClass(q, $index)">
                   <input type="checkbox" ng-disabled="isCorrection" checklist-model="answers[q]" checklist-value="$index">
-                   {{$index+1}}. {{suggest.getText()}}
+                    {{$index+1}}. {{suggest.getText()}}
+                  </input>
                 </label>
               </div>
             </ul>

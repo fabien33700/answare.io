@@ -3,6 +3,12 @@
 angular.module('answareServices', [])
   .factory('QuizFactory', function($http, $q, $log) {
     return {
+      /**
+       * Returns a JSON representation of a quiz from the data server,
+       * without correction datas.
+       * @param string name The quiz name.
+       * @request /api/quizzes/<name>
+       */
       getQuiz: function (name) {
         var defer = $q.defer();
 
@@ -19,6 +25,11 @@ angular.module('answareServices', [])
         return defer.promise;
       },
 
+      /**
+       * Returns a JSON representation of the quiz correction datas
+       * @param string name The quiz name.
+       * @request /api/quizzes/<name>
+       */
       getCorrection: function (name) {
         var defer = $q.defer();
 
@@ -40,6 +51,10 @@ angular.module('answareServices', [])
 
       },
 
+      /**
+       * Returns the quiz list from the data server
+       * @request /api/quizzes
+       */
       getQuizList: function() {
         var defer = $q.defer();
 

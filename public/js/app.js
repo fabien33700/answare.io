@@ -1,7 +1,8 @@
 'use strict';
 
-/* App Module */
-
+/**
+ * Angular app dependencies
+ */
 var answareApp = angular.module('answareApp', [
   'checklist-model',
   'angular-svg-round-progressbar',
@@ -16,6 +17,9 @@ var answareApp = angular.module('answareApp', [
   'answareServices'
 ]);
 
+/**
+ * URL Routes definitions
+ */
 answareApp.config(
   function($routeProvider) {
     $routeProvider.
@@ -30,10 +34,4 @@ answareApp.config(
       otherwise({
         redirectTo: '/quiz'
       });
-  });
-
-answareApp.config(
-  function($httpProvider) {
-      //Enable cross domain calls
-      //$httpProvider.defaults.useXDomain = true;
   });
